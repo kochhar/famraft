@@ -1,0 +1,106 @@
+{% from "_formhelpers.j2" import render_attr %}
+{% from "_formhelpers.j2" import render_rel %}
+{% extends "layout.htm.j2" %}
+
+{% block title %} {{ person.name }} {{ (person.type)|title }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='person.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row entity">
+      <ul id="accordion" class="accordion">
+        <li>
+          <ul class="submenu entityrel">
+            {% for parentchild in person.parents if parentchild.parent.gender == 'Male' %}
+              <li>{{ render_rel(person, parentchild, 'Father') }}</li>
+            {% endfor %}
+            {% for parentchild in person.parents if parentchild.parent.gender == 'Female' %}
+              <li>{{ render_rel(person, parentchild, 'Mother') }}</li>
+            {% endfor %}
+          </ul>
+          <div class="link up reltitle"><i class="fa fa-globe"></i>Parent(s)<i class="fa fa-chevron-down"></i></div>
+        </li>
+
+        <li class="profile">
+          <div class="col col_6 profile-pic">
+            <img class="img-fluid" alt="<<NAME>>" src="https://static.wixstatic.com/media/03c298_dfd1e15ea0bc410ab1d1be7eb00a0af1~mv2.jpg">
+            <div class="edit-pic"></div>
+            <div class="username">
+              <h2>{{ person.name }}<small><i class="fa fa-map-marker"></i>({{ person.type }})</small></h2>
+              <p><i class="fa fa-briefcase"></i> Something very cool</p>
+              <!--
+              <a href="https://web.facebook.com/" target="_blank" class="btn-o"> <i class="fa fa-user-plus"></i> Add Friend</a>
+              <a href="https://www.instagram.com//" target="_blank"  class="btn-o"> <i class="fa fa-plus"></i> Follow</a>
+              -->
+            </div>
+          </div>
+        </li>
+
+        <li class="default open">
+          <div class="link down"><i class="fa fa-globe"></i>About<i class="fa fa-chevron-down"></i></div>
+          <ul class="submenu">
+            <li><a href="#"><i class="fa fa-calendar"></i>{{ render_attr(person, 'person.date_of_birth', 'Date of Birth') }}</a></li>
+            <li><a href="#">{{ render_attr(person, 'person.gender', 'Gender') }}</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <div class="link down"><i class="fa fa-globe"></i>Children<i class="fa fa-chevron-down"></i></div>
+          <ul class="submenu"></ul>
+        </li>
+      </ul>
+    </div>
+{% endblock %}
+
+{% block endbody %}
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script>
+$(function() {
+  var Accordion = function(el, multiple) {
+    this.el = el || {};
+    this.multiple = multiple || false;
+
+    // Variables privadas
+    var links = this.el.find('.link.down');
+    var uplinks = this.el.find('.link.up')
+    // Evento
+    links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
+    uplinks.on('click', {el:this.el, multiple: this.multiple}, this.slideup)
+  }
+
+  Accordion.prototype.dropdown = function(e) {
+    var $el = e.data.el;
+      $this = $(this),
+      $next = $this.next();
+
+    $next.slideToggle();
+    $this.parent().toggleClass('open');
+
+    if (!e.data.multiple) {
+      $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+    };
+  }
+
+  Accordion.prototype.slideup = function(e) {
+    var $el = e.data.el;
+      $this = $(this),
+      $prev = $this.prev();
+
+    $prev.slideToggle();
+    $this.parent().toggleClass('open');
+
+    if (!e.data.multiple) {
+      $el.find('.submenu').not($prev).slideUp().parent().removeClass('open');
+    };
+  }
+
+  var accordion = new Accordion($('#accordion'), false);
+});
+  </script>
+{% endblock %}
