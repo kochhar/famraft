@@ -1,0 +1,40 @@
+{% macro render_field(field, label) %}
+  <div class="form-field">{{ label }} {{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </div>
+{% endmacro %}
+
+
+{% macro render_attr(entity, attr, label) %}
+  <div class="entityattr row">
+    <div class="col col-6 label attrlabel">{{ label }}</div>
+    <div class="col attrval">{{ entity.attrs[attr] }}</div>
+  </div>
+{% endmacro %}
+
+
+{% macro render_rel(entity, rel, label) %}
+  <div class="entityrel row">
+    <div class="col col-3 label rellabel">{{ label }}</div>
+    <div class="col relobj">{{ render_target(rel.subj) }}</div>
+    <div class="col relobjsnip d-none">{{ render_snippet(rel.subj) }}</div>
+  </div>
+{% endmacro %}
+
+
+{% macro render_snippet(entity) %}
+  <div class="entitysnip">
+    <h3 class="title">{{ entity.name }}</h3>
+  </div>
+{% endmacro %}
+
+
+{% macro render_target(entity) %}
+  <a href="{{ url_for('view_person', id=entity.id) }}">{{ entity.name }}</a>
+{% endmacro %}

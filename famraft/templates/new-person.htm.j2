@@ -1,0 +1,30 @@
+{% from "_formhelpers.j2" import render_field %}
+{% extends "layout.htm.j2" %}
+
+{% block title %}New {{ 'Person'|title }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="formwrapper">
+        <h2 class="title">New Person</h2>
+        <form method="POST" action="/person/new">
+            <div id="create.object">
+                {{ render_field(form['object.name'], 'Name') }}
+            </div>
+            <div id="create.person">
+                {{ render_field(form['person.date_of_birth'], 'Date of Birth') }}
+                {{ render_field(form['person.gender'], 'Gender') }}
+               {# {{ render_autocomplete(form.person_parent) }} #}
+               {# {{ render_autocomplete(form.person_child) }} #}
+            </div>
+            {{ form.csrf_token }}
+            {{ form.submit }}
+        </form>
+    </div>
+{% endblock %}
